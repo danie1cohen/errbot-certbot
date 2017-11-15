@@ -51,7 +51,7 @@ class Certbot(BotPlugin):
         """
         Run the given method and send its output to the configured channel.
         """
-        channel = self.build_identifier(self.config.channel)
+        channel = self.build_identifier(self.config['channel'])
         for line in func():
             self.send(channel, line)
 
@@ -88,6 +88,7 @@ class Certbot(BotPlugin):
         ]
         for line in self.popen(cmd_args):
             yield line
+        yield 'Done!'
 
     @botcmd
     def certbot_certificates(self, message, args):
@@ -97,17 +98,19 @@ class Certbot(BotPlugin):
         cmd_args = ['sudo', self.config['certbot'], 'certificates']
         for line in self.popen(cmd_args):
             yield line
+        yield 'Done!'
 
     @botcmd
     def certbot_help(self, message, args):
         """
         Ask the cerbot executable for --help.
         """
+        yield 'Asking certbot for help...'
         for line in self.popen([self.config['certbot'], '--help']):
             yield line
 
     @botcmd
-    def cerbot_renew(self, message, args):
+    def certbot_renew(self, message, args):
         """
         Use cerbot to automatically renew known certs.
         """
