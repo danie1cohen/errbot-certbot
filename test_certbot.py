@@ -4,7 +4,6 @@ Tests for the certbot plugin
 # pylint:disable=protected-access
 from __future__ import print_function
 import os
-from unittest.mock import patch
 
 import certbot
 
@@ -30,6 +29,14 @@ def get_bot(testbot):
 
 def test_popen(testbot):
     """
+    Test the popen method.
+    """
+    bot = get_bot(testbot)
+    for _ in bot.popen(['echo', 'foobar']):
+        pass
+
+def test_popen_mock(testbot):
+    """
     Test the popen method (and test that it's been patched succesfully)
     """
     bot = get_bot(testbot)
@@ -48,7 +55,7 @@ def test_send_output_to_channel(testbot):
 
     bot._send_output_to_channel(print_some_text)
 
-    result = get_messages(testbot)
+    result = testbot.pop_message()
     print(result)
     assert 'start' in result
 
@@ -89,7 +96,7 @@ def test_certbot_help(testbot):
     """
     bot = get_bot(testbot)
     testbot.push_message('!certbot help')
-    result = get_messages(testbot)
+    result = testbot.pop_message()
     assert 'Asking certbot' in result
 
 def test_add_cert(testbot):
@@ -99,9 +106,33 @@ def test_add_cert(testbot):
     bot = get_bot(testbot)
     filepath = os.path.abspath(__file__)
     testbot.push_message('!add cert %s' % filepath)
-    result = get_messages(testbot)
+    result = testbot.pop_message()
     assert 'Added new cert' in result
 
-def get_messages(testbot):
-    """Get all the messages."""
-    return testbot.pop_message()
+def test_add_cert_empty(testbot):
+    """
+    Add a new cert to the configuration.
+    """
+    testbot.push_message('!add cert')
+    result = testbot.pop_message()
+    assert "Certificate can not be empty." in result
+
+def test_add_cert_missing(testbot):
+    """
+    Add a new cert to the configuration.
+    """
+    testbot.push_message('!add cert foobar')
+    result = testbot.pop_message()
+    assert "Cound not find path:" in result
+
+def test_add_cert_dupe(testbot):
+    """
+    Add a new cert to the configuration.
+    """
+    filepath = os.path.abspath(__file__)
+    testbot.push_message('!add cert %s' % filepath)
+    testbot.pop_message()
+    testbot.pop_message()
+    testbot.push_message('!add cert %s' % filepath)
+    result = testbot.pop_message()
+    assert 'already in cert_paths' in result

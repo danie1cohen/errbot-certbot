@@ -123,7 +123,7 @@ class Certbot(BotPlugin):
         Add a given cert path to the stored configuration.
         """
         if not args:
-            yield "certificate can not be empty."
+            yield "Certificate can not be empty."
         elif args in self.config['cert_paths']:
             yield "'%s' is already in cert_paths" % args
         elif not os.path.exists(args):
