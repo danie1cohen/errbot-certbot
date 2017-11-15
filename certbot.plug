@@ -1,0 +1,11 @@
+[Core]
+module = certbot
+name = Certbot
+
+[Documentation]
+description = Control a certbot installation via chat
+
+[Python]
+version = 3
+
+[Errbot]
