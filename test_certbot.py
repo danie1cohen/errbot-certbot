@@ -31,7 +31,9 @@ def test_popen(testbot):
     """
     Test the popen method.
     """
-    bot = get_bot(testbot)
+    bot = testbot._bot.plugin_manager.get_plugin_obj_by_name(
+        'Certbot'
+    )
     for _ in bot.popen(['echo', 'foobar']):
         pass
 
@@ -111,7 +113,7 @@ def test_add_cert(testbot):
 
 def test_add_cert_empty(testbot):
     """
-    Add a new cert to the configuration.
+    Test adding new cert to the configuration, but its empty
     """
     testbot.push_message('!add cert')
     result = testbot.pop_message()
@@ -119,7 +121,7 @@ def test_add_cert_empty(testbot):
 
 def test_add_cert_missing(testbot):
     """
-    Add a new cert to the configuration.
+    Test adding a new cert to the configuration, but it doesnt exist.
     """
     testbot.push_message('!add cert foobar')
     result = testbot.pop_message()
@@ -127,7 +129,7 @@ def test_add_cert_missing(testbot):
 
 def test_add_cert_dupe(testbot):
     """
-    Add a new cert to the configuration.
+    Test add a new cert to the configuration, but it's a duplicate
     """
     filepath = os.path.abspath(__file__)
     testbot.push_message('!add cert %s' % filepath)
@@ -136,3 +138,14 @@ def test_add_cert_dupe(testbot):
     testbot.push_message('!add cert %s' % filepath)
     result = testbot.pop_message()
     assert 'already in cert_paths' in result
+
+def test_configure(testbot):
+    """Test a configuration change."""
+    bot = get_bot(testbot)
+    config = {
+        'cert_paths': [],
+        'certbot': '/new/path/',
+        'channel': '#random',
+    }
+    bot.configure(config)
+    assert bot.config['channel'] == '#random'

@@ -9,7 +9,7 @@ from subprocess import Popen, PIPE
 from errbot import BotPlugin, botcmd
 
 
-CERBOT_TEMPLATE = {
+CERTBOT_TEMPLATE = {
     'cert_paths': [],
     'certbot': '/path/to/certbot-auto',
     'channel': '#general',
@@ -29,15 +29,15 @@ class Certbot(BotPlugin):
         """
         Return the default or active configuration.
         """
-        return CERBOT_TEMPLATE
+        return CERTBOT_TEMPLATE
 
     def configure(self, configuration):
         """Set the configuration for the kodi plugin."""
         if configuration is not None and configuration != {}:
-            config = dict(chain(CERBOT_TEMPLATE.items(),
+            config = dict(chain(CERTBOT_TEMPLATE.items(),
                                 configuration.items()))
         else:
-            config = CERBOT_TEMPLATE
+            config = CERTBOT_TEMPLATE
         super(Certbot, self).configure(config)
 
     def activate(self):
