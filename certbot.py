@@ -1,7 +1,7 @@
 """
 Errbot commands for interacting with a local certbot installation
 """
-#pylint:disable=no-self-use,unused-argument
+# pylint:disable=no-self-use,unused-argument
 from itertools import chain
 import os
 from subprocess import Popen, PIPE
